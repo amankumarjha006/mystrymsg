@@ -1,28 +1,27 @@
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User";
 
-
-
 export async function POST(request: Request) {
     await dbConnect();
 
     try {
         const { username, code } = await request.json();
-        const decodedUseraname = decodeURIComponent(username);
+        const decodedUsername = decodeURIComponent(username);
 
-        const user = await UserModel.findOne({ username: decodedUseraname });
+        const user = await UserModel.findOne({ username: decodedUsername });
         
         if (!user) {
-            return new Response(JSON.stringify(
+            return Response.json(
                 {
                     success: false,
                     message: "User not found",
-                }
-            ), { status: 404 });
+                },
+                { status: 404 }
+            );
         }
 
         const isCodeValid = user.verifyCode === code;
-        const isCodeNotExpired = user.verifyCodeExpiry > new Date();
+        const isCodeNotExpired = new Date(user.verifyCodeExpiry) > new Date();
 
         if (isCodeValid && isCodeNotExpired) {
             user.isVerified = true;
@@ -31,26 +30,27 @@ export async function POST(request: Request) {
                 {
                     success: true,
                     message: "Account verified successfully",
-                }
-            ), { status: 200 };
+                },
+                { status: 200 }
+            );
         }
         else if (!isCodeNotExpired) {
             return Response.json(
                 {
                     success: false,
-                    message: "Expired verification code",
-                }
-            ), { status: 400 } ;
-        
+                    message: "Expired verification code. Please request a new one.",
+                },
+                { status: 400 }
+            );
         }
-        else{
-
+        else {
             return Response.json(
                 {
                     success: false,
                     message: "Incorrect verification code",
-                }
-            ), { status: 400 } ;
+                },
+                { status: 400 }
+            );
         }
 
     } catch (error) {
@@ -60,7 +60,8 @@ export async function POST(request: Request) {
             {
                 success: false,
                 message: "Error verifying user",
-            }
-        ), { status: 500 };
+            },
+            { status: 500 }
+        );
     }
 }

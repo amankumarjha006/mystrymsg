@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import AuthProvider from "@/context/AuthProvider";
 import './globals.css'
 import { Toaster } from "@/components/ui/sonner"
-import Navbar from "@/components/Navbar";
 import { Inter } from 'next/font/google'
 
 const inter = Inter({
@@ -26,7 +25,7 @@ export default function RootLayout({
       <body
         className={`${inter.className}`}
       >
-        <Navbar/>
+
           {children}
           <Toaster/>
       </body>

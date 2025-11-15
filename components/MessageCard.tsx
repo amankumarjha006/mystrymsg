@@ -4,9 +4,7 @@ import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
-    CardTitle,
 } from "@/components/ui/card"
 import {
     AlertDialog,
@@ -22,50 +20,66 @@ import {
 import { Button } from './ui/button'
 import { X } from 'lucide-react'
 import { toast } from 'sonner'
-import { Message } from '@/model/User'
 import axios, { AxiosError } from 'axios'
 import { ApiResponse } from '@/types/ApiResponse'
-import dayjs from 'dayjs'
 
-type MessageCardProps = {
-    message: Message;
-    onMessageDelete: (messageId: string) => void
+type Reply = {
+    _id: string;
+    content: string;
+    createdAt: Date;
 }
 
-const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
+type MessageCardProps = {
+    reply: Reply;
+    postId: string;
+    onReplyDelete: (replyId: string) => void;
+}
 
+const MessageCard = ({ reply, postId, onReplyDelete }: MessageCardProps) => {
+    
     const handleDeleteConfirm = async () => {
         try {
             const response = await axios.delete<ApiResponse>(
-                `/api/delete-message/${message._id}`
+                `/api/posts/${postId}/replies/${reply._id}`
             )
             toast.success(response.data.message)
-            onMessageDelete(message._id as string)
+            onReplyDelete(reply._id)
         } catch (error) {
             const axiosError = error as AxiosError<ApiResponse>
             toast.error(
-                axiosError.response?.data.message ?? 'Failed to delete message'
+                axiosError.response?.data.message ?? 'Failed to delete reply'
             )
         }
     }
 
     return (
-        <Card className="card-bordered">
+        <Card>
             <CardHeader>
-                <div className="flex justify-between items-start">
-                    <CardTitle>{message.content}</CardTitle>
+                <div className="flex justify-between items-start gap-4">
+                    <div className="flex-1">
+                        <p className="text-sm mb-2">{reply.content}</p>
+                        <CardDescription className="text-xs">
+                            {new Date(reply.createdAt).toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}
+                        </CardDescription>
+                    </div>
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
-                            <Button variant="destructive" size="icon">
-                                <X className="w-5 h-5" />
+                            <Button variant="ghost" size="icon">
+                                <X className="w-4 h-4" />
                             </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>
-                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                <AlertDialogTitle>Delete this reply?</AlertDialogTitle>
                                 <AlertDialogDescription>
                                     This action cannot be undone. This will permanently delete this
-                                    message from your account.
+                                    anonymous reply.
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
@@ -77,9 +91,6 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
                         </AlertDialogContent>
                     </AlertDialog>
                 </div>
-                <CardDescription>
-                    {dayjs(message.createdAt).format('MMM D, YYYY h:mm A')}
-                </CardDescription>
             </CardHeader>
         </Card>
     )

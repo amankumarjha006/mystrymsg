@@ -31,31 +31,42 @@ const verifyAccount = () => {
      const [isSubmitting, setIsSubmitting] = useState(false)
 
     const form = useForm<z.infer<typeof verifySchema>>({
-        resolver: zodResolver(verifySchema),
-
-    });
-
-    const onSubmit = async (data: z.infer<typeof verifySchema>) => {
-        setIsSubmitting(true)
-        try {
-            const response = await axios.post(`/api/verify-code`, {
-                usernmae: params.username,
-                code: data.code
-            })
-
-            toast.success("Account verified successfully!")
-            router.replace('sign-in')
-        } catch (error) {
-            console.error("Error in signup of user", error);
-            const axiosError = error as AxiosError<ApiResponse>;
-            toast.error(axiosError.response?.data.message ?? "Signup failed");
-        } finally {
-            setIsSubmitting(false) // Stop loading
-        }
+    resolver: zodResolver(verifySchema),
+    defaultValues: {
+        code: ""  // Add this!
     }
+});
+
+   const onSubmit = async (data: z.infer<typeof verifySchema>) => {
+    setIsSubmitting(true)
+    
+    console.log('=== DEBUG INFO ===')
+    console.log('Username from params:', params.username)
+    console.log('Code from form:', data.code)
+    console.log('API URL:', '/api/verify-code')
+    
+    try {
+        const response = await axios.post('/api/verify-code', {
+            username: params.username,
+            code: data.code
+        })
+        
+        console.log('Success response:', response.data)
+        toast.success("Account verified successfully!")
+        router.replace('/sign-in')
+    } catch (error) {
+        console.error("Full error object:", error);
+        const axiosError = error as AxiosError<ApiResponse>;
+        console.log('Error response:', axiosError.response?.data)
+        console.log('Error status:', axiosError.response?.status)
+        toast.error(axiosError.response?.data.message ?? "Verification failed");
+    } finally {
+        setIsSubmitting(false)
+    }
+}
 
     return (
-        <div className='flex justify-center items-center min-h-screen bg-gray-100'>
+        <div className='flex justify-center items-center min-h-screen bg-gray-100'suppressHydrationWarning>
             <div className='w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md'>
                 <div className="text-center">
                     <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
