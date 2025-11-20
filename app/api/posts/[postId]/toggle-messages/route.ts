@@ -7,7 +7,7 @@ import { toggleAcceptingSchema } from "@/schemas/postSchema";
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { postId: string } }
+  context: { params: Promise<{ postId: string }> }
 ) {
   await dbConnect();
 
@@ -22,8 +22,10 @@ export async function PATCH(
       );
     }
 
-    const { postId } = params;
+    const { postId } = await context.params; // AWAIT this!
     const body = await request.json();
+
+    // rest of your code...
 
     // Validate with Zod
     const result = toggleAcceptingSchema.safeParse(body);

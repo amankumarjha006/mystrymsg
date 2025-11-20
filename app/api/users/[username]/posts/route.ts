@@ -5,13 +5,14 @@ import UserModel from "@/model/User";
 // Get all posts by username (PUBLIC - No auth required)
 export async function GET(
   request: Request,
-  { params }: { params: { username: string } }
+  context: { params: Promise<{ username: string }> }
 ) {
   await dbConnect();
 
   try {
-    const { username } = params;
+    const { username } = await context.params; // AWAIT this!
 
+    // rest of your code...
     // Find user by username
     const user = await UserModel.findOne({ username });
 

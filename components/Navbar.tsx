@@ -11,29 +11,29 @@ const Navbar = () => {
   const user: User = session?.user as User
 
   return (
-    <nav className="border-b bg-background py-4 w-full">
-      <div className="container mx-auto w-7xl px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+    <nav className="border-b bg-black py-4 text-white">
+      <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-extrabold">
+        <Link href="/" className="text-xl font-bold">
           Mystery Message
         </Link>
 
         {/* Auth Section */}
         {session ? (
-          <div className="flex flex-col md:flex-row items-center gap-4">
+          <div className="flex flex-col md:flex-row items-center gap-4 ">
             <span className="text-sm">
               Welcome, {user?.username || user?.email}
             </span>
             <Button 
               className="w-full md:w-auto" 
               onClick={() => signOut()}
-              variant="outline"
+              variant="white"
             >
               Sign out
             </Button>
           </div>
         ) : (
-          <Button asChild className="w-full md:w-auto">
+          <Button asChild className="w-full md:w-auto" variant= "white">
             <Link href="/sign-in">Sign in</Link>
           </Button>
         )}

@@ -5,13 +5,15 @@ import { replySchema } from "@/schemas/postSchema";
 // Send anonymous reply to a post (PUBLIC - No auth required)
 export async function POST(
   request: Request,
-  { params }: { params: { postId: string } }
+  context: { params: Promise<{ postId: string }> }
 ) {
   await dbConnect();
 
   try {
-    const { postId } = params;
+    const { postId } = await context.params; // AWAIT this!
     const body = await request.json();
+
+    // rest of your code...
 
     // Validate with Zod
     const result = replySchema.safeParse(body);

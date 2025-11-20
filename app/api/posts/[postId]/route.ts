@@ -5,8 +5,8 @@ import PostModel from "@/model/Post";
 import UserModel from "@/model/User";
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: { postId: string } }
+    request: Request,
+  context: { params: Promise<{ postId: string }> }
 ) {
   await dbConnect();
 
@@ -21,7 +21,7 @@ export async function DELETE(
       );
     }
 
-    const { postId } = params;
+    const { postId } = await context.params;
 
     // Find the post
     const post = await PostModel.findById(postId);

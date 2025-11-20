@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <AuthProvider>
       <body
-        className={`${inter.className}`}
+        className={`${inter.className} `}
       >
 
           {children}
