@@ -18,13 +18,13 @@ import {
   FormItem,
   FormLabel,
   FormControl,
-  FormDescription,
   FormMessage,
 } from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ThemeToggle from "@/components/theme-toggle"; // <-- added
 
 const Page = () => {
   const [username, setUsername] = useState("");
@@ -36,7 +36,6 @@ const Page = () => {
   const { toasts } = useSonner();
   const router = useRouter();
 
-  // zod + react-hook-form setup
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -85,17 +84,44 @@ const Page = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+    <div
+      className="
+        flex justify-center items-center min-h-screen 
+        bg-gray-100
+        dark:bg-black dark:from-black dark:to-black
+        transition-colors relative
+      "
+    >
+      {/* theme toggle */}
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+
+      <div
+        className="
+          w-full max-w-md p-8 space-y-8 
+          bg-white 
+          dark:bg-[#1a1a1a]/90
+          rounded-lg shadow-md 
+          border border-black/10 dark:border-white/10
+          transition-all
+        "
+      >
         <div className="text-center">
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
             Join Mystery Message
           </h1>
-          <p className="mb-4">Sign up to start your anonymous adventure</p>
+          <p className="text-muted-foreground">
+            Sign up to start your anonymous adventure
+          </p>
         </div>
 
         <Form {...form}>
-          <form id="form-rhf-demo" onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            id="form-rhf-demo"
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6"
+          >
             {/* Username Field */}
             <FormField
               control={form.control}
@@ -113,16 +139,27 @@ const Page = () => {
                       }}
                     />
                   </FormControl>
-                    {isCheckingUsername && <Loader2 className="animate-spin"/>}
-                    <p className={`textsm ${usernameMessage === "Username is available" ? 'text-green-500' : 'text-red-500'}`}>
-                       {usernameMessage}
-                    </p>
+
+                  {isCheckingUsername && (
+                    <Loader2 className="animate-spin" />
+                  )}
+
+                  <p
+                    className={`text-sm ${
+                      usernameMessage === "Username is available"
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {usernameMessage}
+                  </p>
+
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Email Field */}
+            {/* Email */}
             <FormField
               control={form.control}
               name="email"
@@ -141,7 +178,7 @@ const Page = () => {
               )}
             />
 
-            {/* Password Field */}
+            {/* Password */}
             <FormField
               control={form.control}
               name="password"
@@ -163,13 +200,16 @@ const Page = () => {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="mx-auto flex p-5   items-center"
+              className="mx-auto flex p-5 items-center"
             >
               {isSubmitting ? (
                 <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin"/> Please wait
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Please wait
                 </>
-              ):("Sign Up")}
+              ) : (
+                "Sign Up"
+              )}
             </Button>
           </form>
         </Form>
@@ -177,7 +217,10 @@ const Page = () => {
         <div className="text-center mt-2">
           <p>
             Already a member?{" "}
-            <Link href="/sign-in" className="text-blue-600 hover:text-blue-800">
+            <Link
+              href="/sign-in"
+              className="text-blue-600 dark:text-blue-400 hover:underline"
+            >
               Sign in
             </Link>
           </p>
