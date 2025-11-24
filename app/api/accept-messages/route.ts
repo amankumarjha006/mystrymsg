@@ -2,13 +2,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User";
-import {User} from "next-auth";
+import { User } from "next-auth";
 
 export async function POST(request: Request) {
     await dbConnect();
 
     const session = await getServerSession(authOptions);
-    const user:User = session?.user  as User 
+    const user: User = session?.user as User
 
     if (!session || !user) {
         return Response.json(
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     }
 
     const userId = user._id;
-    const {acceptMessages} = await request.json();
+    const { acceptMessages } = await request.json();
 
     try {
         const updatedUser = await UserModel.findByIdAndUpdate(
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
                 }
             ), { status: 404 };
         }
-        else{
+        else {
             return Response.json(
                 {
                     success: true,
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
             ), { status: 200 };
         }
     } catch (error) {
-        console.log("Failed toupdate message preferences", error);
+
         return Response.json(
             {
                 success: false,
@@ -60,7 +60,7 @@ export async function GET(request: Request) {
     await dbConnect();
 
     const session = await getServerSession(authOptions);
-    const user:User = session?.user as User 
+    const user: User = session?.user as User
     if (!session || !user) {
         return Response.json(
             {
@@ -74,7 +74,7 @@ export async function GET(request: Request) {
 
     try {
         const foundUser = await UserModel.findById(userId)
-    
+
         if (!foundUser) {
             return Response.json(
                 {
@@ -83,7 +83,7 @@ export async function GET(request: Request) {
                 }
             ), { status: 404 };
         }
-        else{
+        else {
             return Response.json(
                 {
                     success: true,
@@ -92,7 +92,7 @@ export async function GET(request: Request) {
             ), { status: 200 };
         }
     } catch (error) {
-        console.log("Failed to fetch message preferences", error);
+
         return Response.json(
             {
                 success: false,

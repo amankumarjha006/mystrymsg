@@ -11,16 +11,11 @@ export async function GET(
   try {
     // AWAIT the params!
     const { postId } = await context.params;
-    
-    console.log('=== POST DETAILS API DEBUG ===');
-    console.log('PostId received:', postId);
-    console.log('PostId type:', typeof postId);
 
     // Find the post with all replies
     const post = await PostModel.findById(postId).lean();
 
     if (!post) {
-      console.log('Post not found in database');
       return Response.json(
         { success: false, message: "Post not found" },
         { status: 404 }

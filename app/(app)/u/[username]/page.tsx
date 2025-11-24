@@ -265,48 +265,7 @@ export default function PublicProfilePage() {
             ))}
           </div>
         )}
-
-        <footer className="border-t border-white/10 mt-12 pt-10 pb-6 text-center animate-fade-in delay-300">
-          <div className="space-y-4 pb-6">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
-              <MessageSquare className="h-6 w-6 text-primary" />
-            </div>
-
-            <div className="space-y-1">
-              <h3 className="text-lg font-semibold tracking-tight">
-                Want your own anonymous inbox?
-              </h3>
-              <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                Sign up and start getting honest replies today.
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
-              <Link href="/sign-up">
-                <Button size="sm" className="rounded-full px-6 shadow-lg shadow-primary/20">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Account
-                </Button>
-              </Link>
-
-              <Link href="/sign-in">
-                <Button variant="ghost" size="sm" className="rounded-full px-6">
-                  Sign In
-                  <LogIn className="h-4 w-4 ml-2" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-
-          <Separator className="my-4 opacity-50" />
-
-          <p className="text-xs text-muted-foreground">
-            Powered by{" "}
-            <Link href="/" className="font-medium text-primary hover:underline">
-              WhisperBack
-            </Link>
-          </p>
-        </footer>
+        
       </div>
     </div>
   );

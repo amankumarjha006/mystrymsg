@@ -142,7 +142,7 @@ const Page = () => {
 
         <div className="text-center pt-4 border-t border-white/10">
           <p className="text-sm text-muted-foreground">
-            New to WhisperBack?{" "}
+            New to EchoInbox?{" "}
             <Link
               href="/sign-up"
               className="text-primary font-medium hover:underline transition-all"

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Sparkles, MessageCircle, Shield } from "lucide-react";
+import { Sparkles, MessageCircle, Shield, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
@@ -56,9 +56,12 @@ export default function LandingPage() {
               <Button size="lg" className="rounded-full px-8 h-12 text-base shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all" asChild>
                 <Link href="/sign-up">Get Your Link</Link>
               </Button>
-              <Button size="lg" variant="outline" className="rounded-full px-8 h-12 text-base glass hover:bg-white/10" asChild>
-                <Link href="/feed">Browse Feed</Link>
+                <Link href="/explore">
+              <Button size="lg" variant="outline" className="rounded-full px-8 h-12 text-base glass hover:bg-white/10" >
+              <Compass className="h-5 w-5 mr-1" />
+              Explore
               </Button>
+                </Link>
             </div>
 
             {/* Features Grid */}

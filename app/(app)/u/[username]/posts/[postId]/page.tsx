@@ -34,8 +34,6 @@ import { Badge } from '@/components/ui/badge'
 import { ApiResponse } from '@/types/ApiResponse'
 import MessageCard from '@/components/MessageCard'
 import Link from 'next/link'
-import { useCompletion } from '@ai-sdk/react';
-import { useDebounceCallback } from 'usehooks-ts'
 
 interface Reply {
   _id: string
@@ -64,35 +62,22 @@ export default function PostDetailPage() {
   const [replyContent, setReplyContent] = useState('')
   const [isSending, setIsSending] = useState(false)
 
+  // AI Suggestions State
+  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [isSuggesting, setIsSuggesting] = useState(false)
+
   const isOwner = session?.user?.username === username
-
-  // AI Suggestions
-  const {
-    complete,
-    completion,
-    isLoading: isSuggesting,
-    error,
-  } = useCompletion({
-    api: '/api/suggest-messages',
-    initialCompletion: "What inspired this?||Tell me more!||Great post!",
-    onError: (err) => {
-      console.error("AI Error:", err);
-      toast.error(`Error generating suggestions: ${err.message}`);
-    },
-    onFinish: (prompt, completion) => {
-      console.log("AI Finished:", completion);
-    },
-  });
-
-  const debouncedComplete = useDebounceCallback(complete, 500);
 
   useEffect(() => {
     fetchPost()
   }, [postId])
 
+  // Load initial suggestions when post is loaded
   useEffect(() => {
-    console.log("Current completion:", completion);
-  }, [completion]);
+    if (post && !isOwner && post.isAcceptingMessages && suggestions.length === 0) {
+      fetchSuggestions();
+    }
+  }, [post?.content, isOwner]);
 
   const fetchPost = async () => {
     try {
@@ -103,7 +88,6 @@ export default function PostDetailPage() {
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>
       toast.error(axiosError.response?.data.message || 'Failed to fetch post')
-      // router.push('/') // Removed as per user preference
     } finally {
       setIsLoading(false)
     }
@@ -112,13 +96,35 @@ export default function PostDetailPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     setReplyContent(value);
-    console.log("Input changed, triggering AI with:", value);
-    debouncedComplete(JSON.stringify({ postContent: post?.content, userDraft: value }));
   };
 
-  const fetchSuggestions = () => {
-    console.log("Manual refresh triggered");
-    complete(JSON.stringify({ postContent: post?.content, userDraft: replyContent }));
+  const fetchSuggestions = async () => {
+    if (!post) return;
+
+
+    setIsSuggesting(true);
+    try {
+      const response = await axios.post('/api/suggest-messages', {
+        postContent: post.content,
+        userDraft: replyContent
+      });
+
+      const text = response.data.suggestions;
+
+
+      if (text) {
+        const newSuggestions = text.split('||')
+          .map((s: string) => s.trim())
+          .filter((s: string) => s.length > 0)
+          .slice(0, 3);
+        setSuggestions(newSuggestions);
+      }
+    } catch (error) {
+      console.error("AI Error:", error);
+      toast.error("Failed to fetch suggestions");
+    } finally {
+      setIsSuggesting(false);
+    }
   };
 
   const handleSendReply = async () => {
@@ -173,8 +179,6 @@ export default function PostDetailPage() {
       })
     }
   }
-
-  const suggestions = completion.split('||').map(s => s.trim()).filter(s => s.length > 0).slice(0, 3);
 
   if (isLoading) {
     return (

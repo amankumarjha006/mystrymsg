@@ -20,8 +20,15 @@ const dmSerifDisplay = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
-  title: "WhisperBack - Anonymous Feedback",
+  title: "EchoInbox - Anonymous Feedback",
   description: "Collect anonymous feedback and questions from your audience.",
+  icons: {
+    icon: [
+      { url: "/web/icons8-chat-comic-16.png", sizes: "16x16", type: "image/png" },
+      { url: "/web/icons8-chat-comic-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/web/icons8-chat-comic-96.png", sizes: "96x96", type: "image/png" },
+    ],
+  },
 };
 
 export default function RootLayout({

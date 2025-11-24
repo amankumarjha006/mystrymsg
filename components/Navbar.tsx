@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { User } from "next-auth";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import ThemeToggle from "@/components/theme-toggle";
 import { toast } from "sonner";
@@ -86,11 +87,11 @@ const Navbar = () => {
       <div className="container mx-auto px-4 h-16 flex justify-between items-center">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="h-8 w-8 rounded-lg bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 transition-colors">
-            <Sparkles className="h-5 w-5 text-primary" />
+          <div className="h-8 w-8 rounded-lg flex items-center justify-center">
+            <Image src="/logo.png" alt="EchoInbox Logo" width={32} height={32} className="object-contain" />
           </div>
           <span className="font-display text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 group-hover:to-primary transition-all">
-            WhisperBack
+            EchoInbox
           </span>
         </Link>
 
@@ -106,7 +107,7 @@ const Navbar = () => {
           <ThemeToggle />
 
           {session ? (
-            <DropdownMenu>
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="gap-2 hover:bg-primary/5 pl-2 pr-3 h-10 rounded-full border border-transparent hover:border-primary/10 transition-all">
                   <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary">
@@ -172,8 +173,8 @@ const Navbar = () => {
             <SheetContent side="right" className="w-[300px] glass border-l border-white/10 p-0">
               <SheetHeader className="p-6 border-b border-white/5 text-left">
                 <SheetTitle className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                    <Sparkles className="h-5 w-5 text-primary" />
+                  <div className="h-8 w-8 rounded-lg flex items-center justify-center">
+                    <Image src="/logo.png" alt="EchoInbox Logo" width={32} height={32} className="object-contain" />
                   </div>
                   <span className="font-display text-xl">Menu</span>
                 </SheetTitle>
@@ -207,7 +208,7 @@ const Navbar = () => {
                         </Link>
                       </SheetClose>
 
-                      <SheetClose asChild> 
+                      <SheetClose asChild>
                         <Link
                           href="/dashboard"
                           className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primary/5 hover:text-primary transition-colors"

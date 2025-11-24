@@ -97,7 +97,7 @@ const Page = () => {
             <UserPlus className="h-6 w-6 text-primary" />
           </div>
           <h1 className="text-3xl font-bold tracking-tight font-display">
-            Join WhisperBack
+            Join EchoInbox
           </h1>
           <p className="text-muted-foreground">
             Start your anonymous adventure today

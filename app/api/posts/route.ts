@@ -4,6 +4,8 @@ import dbConnect from "@/lib/dbConnect";
 import PostModel from "@/model/Post";
 import UserModel from "@/model/User";
 import { createPostSchema } from "@/schemas/postSchema";
+import { postRatelimit, checkRateLimit } from "@/lib/ratelimit";
+import DOMPurify from "isomorphic-dompurify";
 
 // Create a new post
 export async function POST(request: Request) {
@@ -20,8 +22,22 @@ export async function POST(request: Request) {
       );
     }
 
+    // Rate limiting check (use user ID as identifier)
+    const userId = user.email || user.username || "anonymous";
+    const { success: rateLimitSuccess } = await checkRateLimit(postRatelimit, userId);
+
+    if (!rateLimitSuccess) {
+      return Response.json(
+        {
+          success: false,
+          message: "Too many posts created. Please wait before creating another."
+        },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
-    
+
     // Validate with Zod
     const result = createPostSchema.safeParse(body);
     if (!result.success) {
@@ -29,8 +45,8 @@ export async function POST(request: Request) {
       return Response.json(
         {
           success: false,
-          message: contentErrors.length > 0 
-            ? contentErrors[0] 
+          message: contentErrors.length > 0
+            ? contentErrors[0]
             : "Invalid post content",
         },
         { status: 400 }
@@ -39,8 +55,24 @@ export async function POST(request: Request) {
 
     const { content } = result.data;
 
+    // Sanitize content to prevent XSS
+    const sanitizedContent = DOMPurify.sanitize(content, {
+      ALLOWED_TAGS: [],
+      ALLOWED_ATTR: []
+    });
+
+    if (!sanitizedContent || sanitizedContent.trim().length === 0) {
+      return Response.json(
+        {
+          success: false,
+          message: "Post content cannot be empty",
+        },
+        { status: 400 }
+      );
+    }
+
     // Find user from database
-    const dbUser = await UserModel.findOne({ 
+    const dbUser = await UserModel.findOne({
       $or: [
         { email: user.email },
         { username: user.username }
@@ -58,7 +90,7 @@ export async function POST(request: Request) {
     const newPost = await PostModel.create({
       userId: dbUser._id,
       username: dbUser.username,
-      content,
+      content: sanitizedContent,
       isAcceptingMessages: true,
       replies: [],
     });
@@ -95,7 +127,7 @@ export async function GET(request: Request) {
       );
     }
 
-    const dbUser = await UserModel.findOne({ 
+    const dbUser = await UserModel.findOne({
       $or: [
         { email: user.email },
         { username: user.username }
